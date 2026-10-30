@@ -1,0 +1,855 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>GroupFarm · Sepolia LP Staking</title>
+  <style>
+    :root {
+      --bg: #0c121e;
+      --surface: #141f32;
+      --surface-light: #1c2b45;
+      --border: #263857;
+      --accent: #2563eb;
+      --accent-hover: #1d4ed8;
+      --success: #10b981;
+      --warning: #f59e0b;
+      --danger: #ef4444;
+      --text: #f1f5f9;
+      --text-muted: #94a3b8;
+      --radius: 12px;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      line-height: 1.5;
+      padding: 24px;
+    }
+
+    .container {
+      max-width: 1180px;
+      margin: 0 auto;
+    }
+
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-bottom: 24px;
+      border-bottom: 1px solid var(--border);
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+
+    .brand h1 {
+      font-size: 26px;
+      font-weight: 700;
+      color: #fff;
+    }
+
+    .brand p {
+      color: var(--text-muted);
+      font-size: 14px;
+    }
+
+    .wallet-status {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 12px;
+      border-radius: 9999px;
+      font-size: 13px;
+      font-weight: 500;
+      background: var(--surface);
+      border: 1px solid var(--border);
+    }
+    .badge.active { background: rgba(16, 185, 129, 0.15); border-color: var(--success); color: var(--success); }
+    .badge.warning { background: rgba(245, 158, 11, 0.15); border-color: var(--warning); color: var(--warning); }
+    .badge.danger { background: rgba(239, 68, 68, 0.15); border-color: var(--danger); color: var(--danger); }
+
+    button {
+      background: var(--accent);
+      color: white;
+      border: none;
+      padding: 10px 16px;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.15s ease, opacity 0.15s;
+    }
+    button:hover:not(:disabled) { background: var(--accent-hover); }
+    button:disabled { opacity: 0.5; cursor: not-allowed; }
+    button.btn-secondary { background: var(--surface-light); border: 1px solid var(--border); color: var(--text); }
+    button.btn-secondary:hover:not(:disabled) { background: var(--border); }
+    button.btn-success { background: var(--success); color: #042f1a; }
+    button.btn-success:hover:not(:disabled) { background: #059669; }
+
+    .grid-top {
+      display: grid;
+      grid-template-columns: 2fr 1fr;
+      gap: 20px;
+      margin-top: 24px;
+    }
+    @media (max-width: 860px) {
+      .grid-top { grid-template-columns: 1fr; }
+    }
+
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 20px;
+    }
+
+    .card h2 {
+      font-size: 18px;
+      margin-bottom: 12px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .stat-row {
+      display: flex;
+      justify-content: space-between;
+      padding: 8px 0;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+      font-size: 14px;
+    }
+    .stat-row:last-child { border-bottom: none; }
+    .stat-label { color: var(--text-muted); }
+    .stat-value { font-weight: 600; font-family: monospace; }
+
+    .pools-section {
+      margin-top: 28px;
+    }
+    .pools-section h2 {
+      font-size: 20px;
+      margin-bottom: 16px;
+    }
+
+    .pool-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+      gap: 20px;
+    }
+
+    .pool-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .pool-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 14px;
+    }
+    .pool-title { font-size: 18px; font-weight: 700; }
+    .pool-subtitle { font-size: 12px; color: var(--text-muted); margin-top: 2px; }
+
+    .input-group {
+      display: flex;
+      gap: 8px;
+      margin-top: 14px;
+    }
+    .input-group input {
+      flex: 1;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      color: white;
+      padding: 8px 12px;
+      font-size: 14px;
+      font-family: monospace;
+    }
+    .input-group input:focus { outline: none; border-color: var(--accent); }
+
+    .btn-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      margin-top: 10px;
+    }
+
+    .btn-full {
+      width: 100%;
+      margin-top: 8px;
+    }
+
+    .tx-status-banner {
+      margin-top: 20px;
+      padding: 14px 18px;
+      border-radius: 8px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      font-size: 14px;
+      display: none;
+    }
+    .tx-status-banner.show { display: block; }
+    .tx-status-banner a { color: #60a5fa; text-decoration: underline; }
+
+    .admin-panel {
+      margin-top: 28px;
+      padding: 20px;
+      border-radius: var(--radius);
+      border: 1px dashed var(--warning);
+      background: rgba(245, 158, 11, 0.05);
+      display: none;
+    }
+    .admin-panel.visible { display: block; }
+    .admin-actions {
+      display: flex;
+      gap: 12px;
+      margin-top: 14px;
+      flex-wrap: wrap;
+    }
+
+    a.external-link {
+      color: #60a5fa;
+      text-decoration: none;
+      font-size: 12px;
+    }
+    a.external-link:hover { text-decoration: underline; }
+
+    .progress-bar-container {
+      width: 100%;
+      height: 6px;
+      background: var(--surface-light);
+      border-radius: 3px;
+      margin: 12px 0;
+      overflow: hidden;
+    }
+    .progress-bar-fill {
+      height: 100%;
+      background: var(--accent);
+      width: 0%;
+      transition: width 0.3s ease;
+    }
+  </style>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/ethers/6.13.4/ethers.umd.min.js"></script>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <div class="brand">
+        <h1>GroupFarm LP Staking</h1>
+        <p>Ethereum Sepolia · Uniswap v2 Farms · GROUP_FISH (GFSH)</p>
+      </div>
+      <div class="wallet-status">
+        <span id="network-badge" class="badge danger">Not Connected</span>
+        <button id="connect-btn" onclick="connectWallet()">Connect MetaMask</button>
+      </div>
+    </header>
+
+    <!-- Global Tx Banner -->
+    <div id="tx-banner" class="tx-status-banner"></div>
+
+    <div class="grid-top">
+      <!-- Campaign Card -->
+      <div class="card">
+        <h2>
+          <span>Campaign Status</span>
+          <span id="campaign-badge" class="badge warning">Loading...</span>
+        </h2>
+        <div class="progress-bar-container">
+          <div id="campaign-progress" class="progress-bar-fill"></div>
+        </div>
+        <div class="stat-row">
+          <span class="stat-label">Farm Contract</span>
+          <span class="stat-value">
+            <a class="external-link" id="farm-address-link" target="_blank" href="https://sepolia.etherscan.io/address/0x6a5e91E3cDD3Ace2D656dF516463bEB8201bFBeB">
+              0x6a5e...FBeB ↗
+            </a>
+          </span>
+        </div>
+        <div class="stat-row">
+          <span class="stat-label">Reward Token (GFSH)</span>
+          <span class="stat-value">
+            <a class="external-link" id="gfsh-address-link" target="_blank" href="https://sepolia.etherscan.io/address/0x823C8A3989b1Fa1b982bFb7bC6b569694D1bEEDB">
+              0x823C...EEDB ↗
+            </a>
+          </span>
+        </div>
+        <div class="stat-row">
+          <span class="stat-label">Start Time</span>
+          <span class="stat-value" id="start-time">-</span>
+        </div>
+        <div class="stat-row">
+          <span class="stat-label">End Time</span>
+          <span class="stat-value" id="end-time">-</span>
+        </div>
+        <div class="stat-row">
+          <span class="stat-label">Time Remaining</span>
+          <span class="stat-value" id="time-remaining">-</span>
+        </div>
+        <div class="stat-row">
+          <span class="stat-label">Farm Reward Reserve</span>
+          <span class="stat-value" id="farm-reward-balance">0 GFSH / 120,000 GFSH</span>
+        </div>
+      </div>
+
+      <!-- Account Card -->
+      <div class="card">
+        <h2>Your Rewards</h2>
+        <div class="stat-row">
+          <span class="stat-label">Wallet Address</span>
+          <span class="stat-value" id="user-address">Not connected</span>
+        </div>
+        <div class="stat-row">
+          <span class="stat-label">GFSH in Wallet</span>
+          <span class="stat-value" id="user-gfsh-balance">0.0000 GFSH</span>
+        </div>
+        <div class="stat-row">
+          <span class="stat-label">Total Claimable Rewards</span>
+          <span class="stat-value" style="color: var(--success); font-size: 16px;" id="user-total-earned">0.0000 GFSH</span>
+        </div>
+        <button id="claim-all-btn" class="btn-success btn-full" style="margin-top: 16px;" onclick="claimAll()" disabled>
+          Claim All Pools
+        </button>
+      </div>
+    </div>
+
+    <!-- Admin Panel (shown only to contract owner) -->
+    <div id="admin-panel" class="admin-panel">
+      <h3 style="color: var(--warning); margin-bottom: 8px;">⚙️ Admin Actions (Owner Detected)</h3>
+      <p style="font-size: 13px; color: var(--text-muted);">
+        The farm requires 120,000 GFSH funded before <code>startSession()</code> can be executed.
+      </p>
+      <div class="admin-actions">
+        <button class="btn-secondary" onclick="fundFarm()">1. Fund 120,000 GFSH to Farm</button>
+        <button class="btn-secondary" onclick="startSession()">2. Call startSession()</button>
+      </div>
+    </div>
+
+    <!-- 3 Pools Section -->
+    <div class="pools-section">
+      <h2>Staking Pools</h2>
+      <div class="pool-grid">
+
+        <!-- Pool 0 -->
+        <div class="pool-card" id="pool-0">
+          <div>
+            <div class="pool-header">
+              <div>
+                <div class="pool-title">Pool 0: GFSH / TAMA</div>
+                <div class="pool-subtitle">Amanda's Pool</div>
+              </div>
+              <a class="external-link" target="_blank" href="https://sepolia.etherscan.io/address/0xdae8a0e7b21d796287F2086021a32FdE49E6a75a">LP Contract ↗</a>
+            </div>
+            <div class="stat-row">
+              <span class="stat-label">Total Staked LP</span>
+              <span class="stat-value" id="p0-total-staked">0.0000</span>
+            </div>
+            <div class="stat-row">
+              <span class="stat-label">Your Staked LP</span>
+              <span class="stat-value" id="p0-user-staked">0.0000</span>
+            </div>
+            <div class="stat-row">
+              <span class="stat-label">LP in Wallet</span>
+              <span class="stat-value" id="p0-user-wallet">0.0000</span>
+            </div>
+            <div class="stat-row">
+              <span class="stat-label">Earned GFSH</span>
+              <span class="stat-value" style="color: var(--success);" id="p0-earned">0.0000</span>
+            </div>
+            <div style="margin-top: 10px;">
+              <a class="external-link" target="_blank" href="https://app.uniswap.org/#/pool/v2?chain=sepolia">
+                Manage Uniswap v2 Liquidity ↗
+              </a>
+            </div>
+          </div>
+
+          <div style="margin-top: 14px;">
+            <div class="input-group">
+              <input type="number" id="p0-input" placeholder="Amount LP" step="any" min="0" />
+              <button class="btn-secondary" onclick="setMax(0)">Max</button>
+            </div>
+            <div class="btn-row">
+              <button class="btn-secondary" id="p0-approve-btn" onclick="approveLp(0)">Approve</button>
+              <button id="p0-stake-btn" onclick="stakeLp(0)">Stake</button>
+            </div>
+            <div class="btn-row">
+              <button class="btn-secondary" onclick="withdrawLp(0)">Withdraw</button>
+              <button class="btn-success" onclick="claimLp(0)">Claim</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Pool 1 -->
+        <div class="pool-card" id="pool-1">
+          <div>
+            <div class="pool-header">
+              <div>
+                <div class="pool-title">Pool 1: GFSH / TAMR</div>
+                <div class="pool-subtitle">Amir's Pool</div>
+              </div>
+              <a class="external-link" target="_blank" href="https://sepolia.etherscan.io/address/0x8dEdc40990F83B38DE95060f9E6A2dA04193AFDB">LP Contract ↗</a>
+            </div>
+            <div class="stat-row">
+              <span class="stat-label">Total Staked LP</span>
+              <span class="stat-value" id="p1-total-staked">0.0000</span>
+            </div>
+            <div class="stat-row">
+              <span class="stat-label">Your Staked LP</span>
+              <span class="stat-value" id="p1-user-staked">0.0000</span>
+            </div>
+            <div class="stat-row">
+              <span class="stat-label">LP in Wallet</span>
+              <span class="stat-value" id="p1-user-wallet">0.0000</span>
+            </div>
+            <div class="stat-row">
+              <span class="stat-label">Earned GFSH</span>
+              <span class="stat-value" style="color: var(--success);" id="p1-earned">0.0000</span>
+            </div>
+            <div style="margin-top: 10px;">
+              <a class="external-link" target="_blank" href="https://app.uniswap.org/#/pool/v2?chain=sepolia">
+                Manage Uniswap v2 Liquidity ↗
+              </a>
+            </div>
+          </div>
+
+          <div style="margin-top: 14px;">
+            <div class="input-group">
+              <input type="number" id="p1-input" placeholder="Amount LP" step="any" min="0" />
+              <button class="btn-secondary" onclick="setMax(1)">Max</button>
+            </div>
+            <div class="btn-row">
+              <button class="btn-secondary" id="p1-approve-btn" onclick="approveLp(1)">Approve</button>
+              <button id="p1-stake-btn" onclick="stakeLp(1)">Stake</button>
+            </div>
+            <div class="btn-row">
+              <button class="btn-secondary" onclick="withdrawLp(1)">Withdraw</button>
+              <button class="btn-success" onclick="claimLp(1)">Claim</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Pool 2 -->
+        <div class="pool-card" id="pool-2">
+          <div>
+            <div class="pool-header">
+              <div>
+                <div class="pool-title">Pool 2: tok / GFSH</div>
+                <div class="pool-subtitle">tokjv's Pool</div>
+              </div>
+              <a class="external-link" target="_blank" href="https://sepolia.etherscan.io/address/0x113E5C416BaABdc66d2986aCB6e5A43452734eB1">LP Contract ↗</a>
+            </div>
+            <div class="stat-row">
+              <span class="stat-label">Total Staked LP</span>
+              <span class="stat-value" id="p2-total-staked">0.0000</span>
+            </div>
+            <div class="stat-row">
+              <span class="stat-label">Your Staked LP</span>
+              <span class="stat-value" id="p2-user-staked">0.0000</span>
+            </div>
+            <div class="stat-row">
+              <span class="stat-label">LP in Wallet</span>
+              <span class="stat-value" id="p2-user-wallet">0.0000</span>
+            </div>
+            <div class="stat-row">
+              <span class="stat-label">Earned GFSH</span>
+              <span class="stat-value" style="color: var(--success);" id="p2-earned">0.0000</span>
+            </div>
+            <div style="margin-top: 10px;">
+              <a class="external-link" target="_blank" href="https://app.uniswap.org/#/pool/v2?chain=sepolia">
+                Manage Uniswap v2 Liquidity ↗
+              </a>
+            </div>
+          </div>
+
+          <div style="margin-top: 14px;">
+            <div class="input-group">
+              <input type="number" id="p2-input" placeholder="Amount LP" step="any" min="0" />
+              <button class="btn-secondary" onclick="setMax(2)">Max</button>
+            </div>
+            <div class="btn-row">
+              <button class="btn-secondary" id="p2-approve-btn" onclick="approveLp(2)">Approve</button>
+              <button id="p2-stake-btn" onclick="stakeLp(2)">Stake</button>
+            </div>
+            <div class="btn-row">
+              <button class="btn-secondary" onclick="withdrawLp(2)">Withdraw</button>
+              <button class="btn-success" onclick="claimLp(2)">Claim</button>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const SEPOLIA_CHAIN_ID = 11155111n;
+    const FARM_ADDRESS = "0x6a5e91E3cDD3Ace2D656dF516463bEB8201bFBeB";
+    const GFSH_ADDRESS = "0x823C8A3989b1Fa1b982bFb7bC6b569694D1bEEDB";
+
+    const POOL_LPS = [
+      "0xdae8a0e7b21d796287F2086021a32FdE49E6a75a", // Pool 0 (GFSH/TAMA)
+      "0x8dEdc40990F83B38DE95060f9E6A2dA04193AFDB", // Pool 1 (GFSH/TAMR)
+      "0x113E5C416BaABdc66d2986aCB6e5A43452734eB1"  // Pool 2 (tok/GFSH)
+    ];
+
+    const FARM_ABI = [
+      "function rewardToken() view returns (address)",
+      "function duration() view returns (uint256)",
+      "function rewardPerPool() view returns (uint256)",
+      "function startTime() view returns (uint256)",
+      "function endTime() view returns (uint256)",
+      "function started() view returns (bool)",
+      "function totalReward() view returns (uint256)",
+      "function totalRewardsClaimed() view returns (uint256)",
+      "function timeLeft() view returns (uint256)",
+      "function owner() view returns (address)",
+      "function pools(uint256) view returns (address lpToken, uint256 totalStaked, uint256 accRewardPerShare, uint256 lastUpdate)",
+      "function users(uint256, address) view returns (uint256 staked, uint256 paidAcc, uint256 rewards)",
+      "function earned(address account, uint256 poolId) view returns (uint256)",
+      "function earnedAll(address account) view returns (uint256)",
+      "function startSession() external",
+      "function stake(uint256 poolId, uint256 amount) external",
+      "function withdraw(uint256 poolId, uint256 amount) external",
+      "function claim(uint256 poolId) external",
+      "function claimAll() external"
+    ];
+
+    const ERC20_ABI = [
+      "function balanceOf(address) view returns (uint256)",
+      "function allowance(address, address) view returns (uint256)",
+      "function approve(address, uint256) returns (bool)",
+      "function transfer(address, uint256) returns (bool)"
+    ];
+
+    let provider, signer, userAddress = null;
+    let farmContract, gfshContract;
+    let poolContracts = [];
+    let isOwner = false;
+
+    // Cache of pool raw balances
+    let rawUserLpBalances = [0n, 0n, 0n];
+    let rawUserStaked = [0n, 0n, 0n];
+
+    function showTxBanner(msg, type = "info", txHash = null) {
+      const banner = document.getElementById("tx-banner");
+      let color = "var(--accent)";
+      if (type === "success") color = "var(--success)";
+      if (type === "warning") color = "var(--warning)";
+      if (type === "danger") color = "var(--danger)";
+
+      let html = `<span style="color: ${color}; font-weight: 600;">[Status]</span> ${msg}`;
+      if (txHash) {
+        html += ` · <a target="_blank" href="https://sepolia.etherscan.io/tx/${txHash}">View on Etherscan ↗</a>`;
+      }
+      banner.innerHTML = html;
+      banner.classList.add("show");
+    }
+
+    async function checkNetwork() {
+      if (!provider) return false;
+      const net = await provider.getNetwork();
+      const badge = document.getElementById("network-badge");
+      if (net.chainId === SEPOLIA_CHAIN_ID) {
+        badge.className = "badge active";
+        badge.innerText = "Sepolia Network (Active)";
+        return true;
+      } else {
+        badge.className = "badge danger";
+        badge.innerText = `Wrong Network (Chain ${net.chainId})`;
+        return false;
+      }
+    }
+
+    async function switchOrAddSepolia() {
+      if (!window.ethereum) return;
+      try {
+        await window.ethereum.request({
+          method: 'wallet_switchEthereumChain',
+          params: [{ chainId: '0xaa36a7' }],
+        });
+      } catch (switchError) {
+        if (switchError.code === 4902) {
+          await window.ethereum.request({
+            method: 'wallet_addEthereumChain',
+            params: [{
+              chainId: '0xaa36a7',
+              chainName: 'Sepolia test network',
+              nativeCurrency: { name: 'SepoliaETH', symbol: 'ETH', decimals: 18 },
+              rpcUrls: ['https://rpc.sepolia.org'],
+              blockExplorerUrls: ['https://sepolia.etherscan.io']
+            }],
+          });
+        }
+      }
+    }
+
+    async function connectWallet() {
+      if (!window.ethereum) {
+        alert("MetaMask or compatible Web3 provider not detected!");
+        return;
+      }
+      try {
+        provider = new ethers.BrowserProvider(window.ethereum);
+        const accounts = await provider.send("eth_requestAccounts", []);
+        signer = await provider.getSigner();
+        userAddress = accounts[0];
+        document.getElementById("user-address").innerText = `${userAddress.slice(0, 6)}...${userAddress.slice(-4)}`;
+        document.getElementById("connect-btn").innerText = "Connected";
+
+        const isSepolia = await checkNetwork();
+        if (!isSepolia) {
+          await switchOrAddSepolia();
+        }
+
+        initContracts();
+        await refreshData();
+      } catch (err) {
+        console.error(err);
+        showTxBanner(err.message, "danger");
+      }
+    }
+
+    function initContracts() {
+      farmContract = new ethers.Contract(FARM_ADDRESS, FARM_ABI, signer || provider);
+      gfshContract = new ethers.Contract(GFSH_ADDRESS, ERC20_ABI, signer || provider);
+      poolContracts = POOL_LPS.map(addr => new ethers.Contract(addr, ERC20_ABI, signer || provider));
+    }
+
+    async function refreshData() {
+      try {
+        if (!farmContract) initContracts();
+
+        // 1. Campaign state
+        const [started, duration, totalReward, owner, farmGfshBal] = await Promise.all([
+          farmContract.started(),
+          farmContract.duration(),
+          farmContract.totalReward(),
+          farmContract.owner(),
+          gfshContract.balanceOf(FARM_ADDRESS)
+        ]);
+
+        isOwner = userAddress && (userAddress.toLowerCase() === owner.toLowerCase());
+        const adminPanel = document.getElementById("admin-panel");
+        if (isOwner) {
+          adminPanel.classList.add("visible");
+        } else {
+          adminPanel.classList.remove("visible");
+        }
+
+        const farmRewardBalFormatted = `${parseFloat(ethers.formatEther(farmGfshBal)).toLocaleString()} GFSH`;
+        document.getElementById("farm-reward-balance").innerText = `${farmRewardBalFormatted} / 120,000 GFSH`;
+
+        let startTime = 0n, endTime = 0n;
+        if (started) {
+          [startTime, endTime] = await Promise.all([
+            farmContract.startTime(),
+            farmContract.endTime()
+          ]);
+        }
+
+        const now = BigInt(Math.floor(Date.now() / 1000));
+        const campaignBadge = document.getElementById("campaign-badge");
+        const progressBar = document.getElementById("campaign-progress");
+
+        if (!started) {
+          if (farmGfshBal < totalReward) {
+            campaignBadge.className = "badge danger";
+            campaignBadge.innerText = "NOT FUNDED";
+          } else {
+            campaignBadge.className = "badge warning";
+            campaignBadge.innerText = "READY TO START";
+          }
+          document.getElementById("start-time").innerText = "Not started";
+          document.getElementById("end-time").innerText = "Not started";
+          document.getElementById("time-remaining").innerText = `${Number(duration) / 60} minutes`;
+          progressBar.style.width = "0%";
+        } else if (now < endTime) {
+          campaignBadge.className = "badge active";
+          campaignBadge.innerText = "ACTIVE";
+          const dStart = new Date(Number(startTime) * 1000);
+          const dEnd = new Date(Number(endTime) * 1000);
+          document.getElementById("start-time").innerText = dStart.toLocaleTimeString();
+          document.getElementById("end-time").innerText = dEnd.toLocaleTimeString();
+
+          const remSeconds = Number(endTime - now);
+          const mins = Math.floor(remSeconds / 60);
+          const secs = remSeconds % 60;
+          document.getElementById("time-remaining").innerText = `${mins}m ${secs}s`;
+
+          const elapsed = Number(now - startTime);
+          const dur = Number(duration);
+          const pct = Math.min(100, Math.max(0, (elapsed / dur) * 100));
+          progressBar.style.width = `${pct}%`;
+        } else {
+          campaignBadge.className = "badge danger";
+          campaignBadge.innerText = "ENDED";
+          document.getElementById("time-remaining").innerText = "0s (Ended)";
+          progressBar.style.width = "100%";
+        }
+
+        // 2. User overall stats
+        if (userAddress) {
+          const [userBal, totalEarned] = await Promise.all([
+            gfshContract.balanceOf(userAddress),
+            farmContract.earnedAll(userAddress)
+          ]);
+          document.getElementById("user-gfsh-balance").innerText = `${parseFloat(ethers.formatEther(userBal)).toFixed(4)} GFSH`;
+          document.getElementById("user-total-earned").innerText = `${parseFloat(ethers.formatEther(totalEarned)).toFixed(4)} GFSH`;
+          document.getElementById("claim-all-btn").disabled = (totalEarned === 0n);
+        }
+
+        // 3. Pool-by-pool stats
+        for (let i = 0; i < 3; i++) {
+          const poolData = await farmContract.pools(i);
+          document.getElementById(`p${i}-total-staked`).innerText = parseFloat(ethers.formatEther(poolData.totalStaked)).toFixed(4);
+
+          if (userAddress) {
+            const [uData, uEarned, uWalletLp, allowance] = await Promise.all([
+              farmContract.users(i, userAddress),
+              farmContract.earned(userAddress, i),
+              poolContracts[i].balanceOf(userAddress),
+              poolContracts[i].allowance(userAddress, FARM_ADDRESS)
+            ]);
+
+            rawUserLpBalances[i] = uWalletLp;
+            rawUserStaked[i] = uData.staked;
+
+            document.getElementById(`p${i}-user-staked`).innerText = parseFloat(ethers.formatEther(uData.staked)).toFixed(4);
+            document.getElementById(`p${i}-user-wallet`).innerText = parseFloat(ethers.formatEther(uWalletLp)).toFixed(4);
+            document.getElementById(`p${i}-earned`).innerText = parseFloat(ethers.formatEther(uEarned)).toFixed(4);
+
+            const approveBtn = document.getElementById(`p${i}-approve-btn`);
+            if (allowance >= ethers.parseEther("1000000")) {
+              approveBtn.innerText = "Approved ✓";
+              approveBtn.disabled = true;
+            } else {
+              approveBtn.innerText = "Approve";
+              approveBtn.disabled = false;
+            }
+          }
+        }
+      } catch (e) {
+        console.error("Refresh error:", e);
+      }
+    }
+
+    function setMax(poolId) {
+      const bal = rawUserLpBalances[poolId];
+      document.getElementById(`p${poolId}-input`).value = ethers.formatEther(bal);
+    }
+
+    async function executeTx(txFn, label) {
+      if (!signer) {
+        alert("Please connect wallet first!");
+        return;
+      }
+      try {
+        showTxBanner(`Waiting for signature in MetaMask: ${label}...`, "warning");
+        const tx = await txFn();
+        showTxBanner(`Transaction submitted: ${label}. Waiting for block confirmation...`, "warning", tx.hash);
+        const receipt = await tx.wait();
+        if (receipt.status === 1) {
+          showTxBanner(`Transaction confirmed successfully! (${label})`, "success", tx.hash);
+          await refreshData();
+        } else {
+          showTxBanner(`Transaction reverted on-chain. (${label})`, "danger", tx.hash);
+        }
+      } catch (err) {
+        console.error(err);
+        showTxBanner(err.reason || err.shortMessage || err.message, "danger");
+      }
+    }
+
+    async function approveLp(poolId) {
+      await executeTx(async () => {
+        const contract = poolContracts[poolId].connect(signer);
+        return await contract.approve(FARM_ADDRESS, ethers.MaxUint256);
+      }, `Approve Pool ${poolId} LP`);
+    }
+
+    async function stakeLp(poolId) {
+      const val = document.getElementById(`p${poolId}-input`).value;
+      if (!val || parseFloat(val) <= 0) {
+        alert("Please enter a valid amount");
+        return;
+      }
+      const amount = ethers.parseEther(val);
+      await executeTx(async () => {
+        const contract = farmContract.connect(signer);
+        return await contract.stake(poolId, amount);
+      }, `Stake ${val} LP into Pool ${poolId}`);
+    }
+
+    async function withdrawLp(poolId) {
+      const val = document.getElementById(`p${poolId}-input`).value;
+      if (!val || parseFloat(val) <= 0) {
+        alert("Please enter a valid amount");
+        return;
+      }
+      const amount = ethers.parseEther(val);
+      await executeTx(async () => {
+        const contract = farmContract.connect(signer);
+        return await contract.withdraw(poolId, amount);
+      }, `Withdraw ${val} LP from Pool ${poolId}`);
+    }
+
+    async function claimLp(poolId) {
+      await executeTx(async () => {
+        const contract = farmContract.connect(signer);
+        return await contract.claim(poolId);
+      }, `Claim Pool ${poolId} Rewards`);
+    }
+
+    async function claimAll() {
+      await executeTx(async () => {
+        const contract = farmContract.connect(signer);
+        return await contract.claimAll();
+      }, `Claim All Pools Rewards`);
+    }
+
+    // Admin functions
+    async function fundFarm() {
+      const amount = ethers.parseEther("120000");
+      await executeTx(async () => {
+        const contract = gfshContract.connect(signer);
+        return await contract.transfer(FARM_ADDRESS, amount);
+      }, `Transfer 120,000 GFSH to Farm`);
+    }
+
+    async function startSession() {
+      await executeTx(async () => {
+        const contract = farmContract.connect(signer);
+        return await contract.startSession();
+      }, `Start Farm Session`);
+    }
+
+    // Auto-refresh interval
+    window.addEventListener("DOMContentLoaded", () => {
+      // Connect to public provider if window.ethereum not available immediately
+      if (window.ethereum) {
+        provider = new ethers.BrowserProvider(window.ethereum);
+        window.ethereum.on("accountsChanged", () => window.location.reload());
+        window.ethereum.on("chainChanged", () => window.location.reload());
+      } else {
+        provider = new ethers.JsonRpcProvider("https://ethereum-sepolia-rpc.publicnode.com");
+      }
+      initContracts();
+      refreshData();
+      setInterval(refreshData, 3000);
+    });
+  </script>
+</body>
+</html>
