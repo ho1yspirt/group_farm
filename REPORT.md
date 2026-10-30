@@ -86,6 +86,9 @@ Testi tika izpildīti ar Hardhat integrēto Solidity testu vidi (`test/GroupFarm
 
 ## 4. Tīmekļa Lietotne (Frontend)
 
+- **Repozitorijs**: [https://github.com/ho1yspirt/group_farm](https://github.com/ho1yspirt/group_farm)
+- **Publicētā lapa (GitHub Pages)**: [https://ho1yspirt.github.io/group_farm/](https://ho1yspirt.github.io/group_farm/)
+
 Izstrādāta viena neatkarīga HTML/JavaScript lietotne `index.html`:
 - **MetaMask & Tīkla Pārbaude**: Automātiski nosaka un piedāvā pārslēgties uz Ethereum Sepolia (Chain ID `11155111` / `0xaa36a7`).
 - **Kopējais Kampaņas Panelis**:
