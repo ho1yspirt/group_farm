@@ -4,29 +4,56 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>GroupFarm · Sepolia LP Staking</title>
+  
+  <!-- Material Design 3: Google Fonts & Material Symbols -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
+
   <style>
     :root {
-      --bg: #0c121e;
-      --surface: #141f32;
-      --surface-light: #1c2b45;
-      --border: #263857;
-      --accent: #2563eb;
-      --accent-hover: #1d4ed8;
-      --success: #10b981;
-      --warning: #f59e0b;
-      --danger: #ef4444;
-      --text: #f1f5f9;
-      --text-muted: #94a3b8;
-      --radius: 12px;
+      /* Material Design 3 (M3) Dark Baseline Tokens */
+      --md-sys-color-background: #111318;
+      --md-sys-color-on-background: #e2e2e9;
+      --md-sys-color-surface: #1a1c22;
+      --md-sys-color-surface-container: #21242c;
+      --md-sys-color-surface-container-high: #2b2e37;
+      --md-sys-color-outline: #8e9099;
+      --md-sys-color-outline-variant: #44474f;
+      --md-sys-color-primary: #a8c8ff;
+      --md-sys-color-on-primary: #003062;
+      --md-sys-color-primary-container: #00468b;
+      --md-sys-color-on-primary-container: #d6e3ff;
+      --md-sys-color-secondary-container: #3d4758;
+      --md-sys-color-on-secondary-container: #d9e3f9;
+      --md-sys-color-tertiary: #6dd58c;
+      --md-sys-color-on-tertiary: #003919;
+      --md-sys-color-tertiary-container: #005327;
+      --md-sys-color-on-tertiary-container: #89f2a6;
+      --md-sys-color-error: #ffb4ab;
+      --md-sys-color-on-error: #690005;
+      --md-sys-color-error-container: #93000a;
+      --md-sys-color-warning: #ffb74d;
+
+      --md-elevation-1: 0 1px 3px 1px rgba(0,0,0,0.25), 0 1px 2px 0 rgba(0,0,0,0.35);
+      --md-elevation-2: 0 2px 6px 2px rgba(0,0,0,0.30), 0 1px 2px 0 rgba(0,0,0,0.40);
+      --md-elevation-3: 0 4px 8px 3px rgba(0,0,0,0.30), 0 1px 3px 0 rgba(0,0,0,0.40);
+
+      --md-shape-corner-small: 8px;
+      --md-shape-corner-medium: 16px;
+      --md-shape-corner-full: 9999px;
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; }
+    
     body {
-      background: var(--bg);
-      color: var(--text);
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background: var(--md-sys-color-background);
+      color: var(--md-sys-color-on-background);
+      font-family: 'Roboto', -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
       line-height: 1.5;
       padding: 24px;
+      -webkit-font-smoothing: antialiased;
     }
 
     .container {
@@ -34,25 +61,50 @@
       margin: 0 auto;
     }
 
+    .material-symbols-outlined {
+      vertical-align: middle;
+      font-size: 20px;
+    }
+
+    /* M3 Top App Bar */
     header {
       display: flex;
       justify-content: space-between;
       align-items: center;
       padding-bottom: 24px;
-      border-bottom: 1px solid var(--border);
+      border-bottom: 1px solid var(--md-sys-color-outline-variant);
       flex-wrap: wrap;
       gap: 16px;
     }
 
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .brand-icon {
+      width: 48px;
+      height: 48px;
+      border-radius: var(--md-shape-corner-medium);
+      background: var(--md-sys-color-primary-container);
+      color: var(--md-sys-color-primary);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .brand-icon .material-symbols-outlined { font-size: 28px; }
+
     .brand h1 {
-      font-size: 26px;
+      font-size: 24px;
       font-weight: 700;
+      letter-spacing: -0.2px;
       color: #fff;
     }
 
     .brand p {
-      color: var(--text-muted);
-      font-size: 14px;
+      color: var(--md-sys-color-outline);
+      font-size: 13px;
     }
 
     .wallet-status {
@@ -62,39 +114,85 @@
       flex-wrap: wrap;
     }
 
+    /* M3 Chips / Badges */
     .badge {
       display: inline-flex;
       align-items: center;
       gap: 6px;
-      padding: 6px 12px;
-      border-radius: 9999px;
+      padding: 6px 14px;
+      border-radius: var(--md-shape-corner-small);
       font-size: 13px;
       font-weight: 500;
-      background: var(--surface);
-      border: 1px solid var(--border);
+      background: var(--md-sys-color-surface-container);
+      border: 1px solid var(--md-sys-color-outline-variant);
+      color: var(--md-sys-color-on-background);
     }
-    .badge.active { background: rgba(16, 185, 129, 0.15); border-color: var(--success); color: var(--success); }
-    .badge.warning { background: rgba(245, 158, 11, 0.15); border-color: var(--warning); color: var(--warning); }
-    .badge.danger { background: rgba(239, 68, 68, 0.15); border-color: var(--danger); color: var(--danger); }
+    .badge.active {
+      background: var(--md-sys-color-tertiary-container);
+      border-color: var(--md-sys-color-tertiary);
+      color: var(--md-sys-color-on-tertiary-container);
+    }
+    .badge.warning {
+      background: rgba(255, 183, 77, 0.15);
+      border-color: var(--md-sys-color-warning);
+      color: var(--md-sys-color-warning);
+    }
+    .badge.danger {
+      background: var(--md-sys-color-error-container);
+      border-color: var(--md-sys-color-error);
+      color: var(--md-sys-color-error);
+    }
 
+    /* M3 Buttons */
     button {
-      background: var(--accent);
-      color: white;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      background: var(--md-sys-color-primary);
+      color: var(--md-sys-color-on-primary);
       border: none;
-      padding: 10px 16px;
-      border-radius: 8px;
+      padding: 10px 20px;
+      border-radius: var(--md-shape-corner-full);
+      font-family: inherit;
       font-size: 14px;
-      font-weight: 600;
+      font-weight: 500;
+      letter-spacing: 0.1px;
       cursor: pointer;
-      transition: background 0.15s ease, opacity 0.15s;
+      box-shadow: var(--md-elevation-1);
+      transition: background 0.2s, box-shadow 0.2s, opacity 0.2s;
     }
-    button:hover:not(:disabled) { background: var(--accent-hover); }
-    button:disabled { opacity: 0.5; cursor: not-allowed; }
-    button.btn-secondary { background: var(--surface-light); border: 1px solid var(--border); color: var(--text); }
-    button.btn-secondary:hover:not(:disabled) { background: var(--border); }
-    button.btn-success { background: var(--success); color: #042f1a; }
-    button.btn-success:hover:not(:disabled) { background: #059669; }
+    button:hover:not(:disabled) {
+      box-shadow: var(--md-elevation-2);
+      filter: brightness(1.08);
+    }
+    button:active:not(:disabled) {
+      box-shadow: var(--md-elevation-1);
+    }
+    button:disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+      box-shadow: none;
+    }
+    button.btn-secondary {
+      background: var(--md-sys-color-surface-container-high);
+      color: var(--md-sys-color-on-background);
+      border: 1px solid var(--md-sys-color-outline-variant);
+      box-shadow: none;
+    }
+    button.btn-secondary:hover:not(:disabled) {
+      background: var(--md-sys-color-secondary-container);
+      border-color: var(--md-sys-color-outline);
+    }
+    button.btn-success {
+      background: var(--md-sys-color-tertiary);
+      color: var(--md-sys-color-on-tertiary);
+    }
+    button.btn-success:hover:not(:disabled) {
+      filter: brightness(1.1);
+    }
 
+    /* Layout & Cards */
     .grid-top {
       display: grid;
       grid-template-columns: 2fr 1fr;
@@ -105,38 +203,61 @@
       .grid-top { grid-template-columns: 1fr; }
     }
 
+    /* M3 Elevated Card */
     .card {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      padding: 20px;
+      background: var(--md-sys-color-surface-container);
+      border: 1px solid var(--md-sys-color-outline-variant);
+      border-radius: var(--md-shape-corner-medium);
+      padding: 24px;
+      box-shadow: var(--md-elevation-1);
     }
 
     .card h2 {
       font-size: 18px;
-      margin-bottom: 12px;
+      font-weight: 500;
+      margin-bottom: 16px;
       display: flex;
       justify-content: space-between;
       align-items: center;
+      color: #fff;
     }
 
     .stat-row {
       display: flex;
       justify-content: space-between;
-      padding: 8px 0;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+      padding: 10px 0;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.06);
       font-size: 14px;
     }
     .stat-row:last-child { border-bottom: none; }
-    .stat-label { color: var(--text-muted); }
-    .stat-value { font-weight: 600; font-family: monospace; }
+    .stat-label { color: var(--md-sys-color-outline); }
+    .stat-value { font-weight: 500; font-family: monospace; font-size: 14px; }
+
+    /* M3 Progress Bar */
+    .progress-bar-container {
+      width: 100%;
+      height: 8px;
+      background: var(--md-sys-color-surface-container-high);
+      border-radius: var(--md-shape-corner-full);
+      margin: 14px 0;
+      overflow: hidden;
+    }
+    .progress-bar-fill {
+      height: 100%;
+      background: var(--md-sys-color-primary);
+      width: 0%;
+      border-radius: var(--md-shape-corner-full);
+      transition: width 0.3s ease;
+    }
 
     .pools-section {
-      margin-top: 28px;
+      margin-top: 32px;
     }
     .pools-section h2 {
-      font-size: 20px;
-      margin-bottom: 16px;
+      font-size: 22px;
+      font-weight: 500;
+      margin-bottom: 18px;
+      color: #fff;
     }
 
     .pool-grid {
@@ -146,71 +267,85 @@
     }
 
     .pool-card {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      padding: 20px;
+      background: var(--md-sys-color-surface-container);
+      border: 1px solid var(--md-sys-color-outline-variant);
+      border-radius: var(--md-shape-corner-medium);
+      padding: 24px;
       display: flex;
       flex-direction: column;
       justify-content: space-between;
+      box-shadow: var(--md-elevation-1);
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .pool-card:hover {
+      box-shadow: var(--md-elevation-2);
+      border-color: var(--md-sys-color-outline);
     }
 
     .pool-header {
       display: flex;
       justify-content: space-between;
       align-items: flex-start;
-      margin-bottom: 14px;
+      margin-bottom: 16px;
     }
-    .pool-title { font-size: 18px; font-weight: 700; }
-    .pool-subtitle { font-size: 12px; color: var(--text-muted); margin-top: 2px; }
+    .pool-title { font-size: 18px; font-weight: 700; color: #fff; }
+    .pool-subtitle { font-size: 12px; color: var(--md-sys-color-outline); margin-top: 2px; }
 
+    /* M3 Outlined Text Field */
     .input-group {
       display: flex;
       gap: 8px;
-      margin-top: 14px;
+      margin-top: 16px;
     }
     .input-group input {
       flex: 1;
-      background: var(--bg);
-      border: 1px solid var(--border);
-      border-radius: 8px;
+      background: var(--md-sys-color-surface);
+      border: 1px solid var(--md-sys-color-outline-variant);
+      border-radius: var(--md-shape-corner-small);
       color: white;
-      padding: 8px 12px;
+      padding: 10px 14px;
       font-size: 14px;
       font-family: monospace;
+      transition: border-color 0.2s;
     }
-    .input-group input:focus { outline: none; border-color: var(--accent); }
+    .input-group input:focus {
+      outline: none;
+      border-color: var(--md-sys-color-primary);
+      box-shadow: 0 0 0 1px var(--md-sys-color-primary);
+    }
 
     .btn-row {
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: 8px;
+      gap: 10px;
       margin-top: 10px;
     }
 
     .btn-full {
       width: 100%;
-      margin-top: 8px;
+      margin-top: 12px;
     }
 
+    /* M3 Snackbar / Banner */
     .tx-status-banner {
       margin-top: 20px;
-      padding: 14px 18px;
-      border-radius: 8px;
-      background: var(--surface);
-      border: 1px solid var(--border);
+      padding: 16px 20px;
+      border-radius: var(--md-shape-corner-medium);
+      background: var(--md-sys-color-surface-container-high);
+      border: 1px solid var(--md-sys-color-outline-variant);
       font-size: 14px;
       display: none;
+      box-shadow: var(--md-elevation-2);
     }
     .tx-status-banner.show { display: block; }
-    .tx-status-banner a { color: #60a5fa; text-decoration: underline; }
+    .tx-status-banner a { color: var(--md-sys-color-primary); text-decoration: underline; }
 
     .admin-panel {
       margin-top: 28px;
-      padding: 20px;
-      border-radius: var(--radius);
-      border: 1px dashed var(--warning);
-      background: rgba(245, 158, 11, 0.05);
+      padding: 22px;
+      border-radius: var(--md-shape-corner-medium);
+      border: 1px dashed var(--md-sys-color-warning);
+      background: rgba(255, 183, 77, 0.05);
       display: none;
     }
     .admin-panel.visible { display: block; }
@@ -222,26 +357,14 @@
     }
 
     a.external-link {
-      color: #60a5fa;
+      color: var(--md-sys-color-primary);
       text-decoration: none;
       font-size: 12px;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
     }
     a.external-link:hover { text-decoration: underline; }
-
-    .progress-bar-container {
-      width: 100%;
-      height: 6px;
-      background: var(--surface-light);
-      border-radius: 3px;
-      margin: 12px 0;
-      overflow: hidden;
-    }
-    .progress-bar-fill {
-      height: 100%;
-      background: var(--accent);
-      width: 0%;
-      transition: width 0.3s ease;
-    }
   </style>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/ethers/6.13.4/ethers.umd.min.js"></script>
 </head>
@@ -249,12 +372,23 @@
   <div class="container">
     <header>
       <div class="brand">
-        <h1>GroupFarm LP Staking</h1>
-        <p>Ethereum Sepolia · Uniswap v2 Farms · GROUP_FISH (GFSH)</p>
+        <div class="brand-icon">
+          <span class="material-symbols-outlined">waves</span>
+        </div>
+        <div>
+          <h1>GroupFarm LP Staking</h1>
+          <p>Ethereum Sepolia · Uniswap v2 Farms · GROUP_FISH (GFSH)</p>
+        </div>
       </div>
       <div class="wallet-status">
-        <span id="network-badge" class="badge danger">Not Connected</span>
-        <button id="connect-btn" onclick="connectWallet()">Connect MetaMask</button>
+        <span id="network-badge" class="badge danger">
+          <span class="material-symbols-outlined" style="font-size: 16px;">wifi_off</span>
+          Not Connected
+        </span>
+        <button id="connect-btn" onclick="connectWallet()">
+          <span class="material-symbols-outlined" style="font-size: 18px;">account_balance_wallet</span>
+          Connect MetaMask
+        </button>
       </div>
     </header>
 
@@ -265,7 +399,10 @@
       <!-- Campaign Card -->
       <div class="card">
         <h2>
-          <span>Campaign Status</span>
+          <span style="display: flex; align-items: center; gap: 8px;">
+            <span class="material-symbols-outlined" style="color: var(--md-sys-color-primary);">event_upcoming</span>
+            Campaign Status
+          </span>
           <span id="campaign-badge" class="badge warning">Loading...</span>
         </h2>
         <div class="progress-bar-container">
@@ -275,7 +412,7 @@
           <span class="stat-label">Farm Contract</span>
           <span class="stat-value">
             <a class="external-link" id="farm-address-link" target="_blank" href="https://sepolia.etherscan.io/address/0x6a5e91E3cDD3Ace2D656dF516463bEB8201bFBeB">
-              0x6a5e...FBeB ↗
+              0x6a5e...FBeB <span class="material-symbols-outlined" style="font-size: 14px;">open_in_new</span>
             </a>
           </span>
         </div>
@@ -283,7 +420,7 @@
           <span class="stat-label">Reward Token (GFSH)</span>
           <span class="stat-value">
             <a class="external-link" id="gfsh-address-link" target="_blank" href="https://sepolia.etherscan.io/address/0x823C8A3989b1Fa1b982bFb7bC6b569694D1bEEDB">
-              0x823C...EEDB ↗
+              0x823C...EEDB <span class="material-symbols-outlined" style="font-size: 14px;">open_in_new</span>
             </a>
           </span>
         </div>
@@ -307,7 +444,12 @@
 
       <!-- Account Card -->
       <div class="card">
-        <h2>Your Rewards</h2>
+        <h2>
+          <span style="display: flex; align-items: center; gap: 8px;">
+            <span class="material-symbols-outlined" style="color: var(--md-sys-color-tertiary);">payments</span>
+            Your Rewards
+          </span>
+        </h2>
         <div class="stat-row">
           <span class="stat-label">Wallet Address</span>
           <span class="stat-value" id="user-address">Not connected</span>
@@ -318,9 +460,10 @@
         </div>
         <div class="stat-row">
           <span class="stat-label">Total Claimable Rewards</span>
-          <span class="stat-value" style="color: var(--success); font-size: 16px;" id="user-total-earned">0.0000 GFSH</span>
+          <span class="stat-value" style="color: var(--md-sys-color-tertiary); font-size: 16px;" id="user-total-earned">0.0000 GFSH</span>
         </div>
         <button id="claim-all-btn" class="btn-success btn-full" style="margin-top: 16px;" onclick="claimAll()" disabled>
+          <span class="material-symbols-outlined" style="font-size: 18px;">redeem</span>
           Claim All Pools
         </button>
       </div>
@@ -328,13 +471,22 @@
 
     <!-- Admin Panel (shown only to contract owner) -->
     <div id="admin-panel" class="admin-panel">
-      <h3 style="color: var(--warning); margin-bottom: 8px;">⚙️ Admin Actions (Owner Detected)</h3>
-      <p style="font-size: 13px; color: var(--text-muted);">
+      <h3 style="color: var(--md-sys-color-warning); margin-bottom: 8px; display: flex; align-items: center; gap: 6px;">
+        <span class="material-symbols-outlined">admin_panel_settings</span>
+        Admin Actions (Contract Owner Detected)
+      </h3>
+      <p style="font-size: 13px; color: var(--md-sys-color-outline);">
         The farm requires 120,000 GFSH funded before <code>startSession()</code> can be executed.
       </p>
       <div class="admin-actions">
-        <button class="btn-secondary" onclick="fundFarm()">1. Fund 120,000 GFSH to Farm</button>
-        <button class="btn-secondary" onclick="startSession()">2. Call startSession()</button>
+        <button class="btn-secondary" onclick="fundFarm()">
+          <span class="material-symbols-outlined" style="font-size: 18px;">toll</span>
+          1. Fund 120,000 GFSH to Farm
+        </button>
+        <button class="btn-secondary" onclick="startSession()">
+          <span class="material-symbols-outlined" style="font-size: 18px;">play_arrow</span>
+          2. Call startSession()
+        </button>
       </div>
     </div>
 
@@ -351,7 +503,9 @@
                 <div class="pool-title">Pool 0: GFSH / TAMA</div>
                 <div class="pool-subtitle">Amanda's Pool</div>
               </div>
-              <a class="external-link" target="_blank" href="https://sepolia.etherscan.io/address/0xdae8a0e7b21d796287F2086021a32FdE49E6a75a">LP Contract ↗</a>
+              <a class="external-link" target="_blank" href="https://sepolia.etherscan.io/address/0xdae8a0e7b21d796287F2086021a32FdE49E6a75a">
+                LP Contract <span class="material-symbols-outlined" style="font-size: 13px;">open_in_new</span>
+              </a>
             </div>
             <div class="stat-row">
               <span class="stat-label">Total Staked LP</span>
@@ -367,11 +521,11 @@
             </div>
             <div class="stat-row">
               <span class="stat-label">Earned GFSH</span>
-              <span class="stat-value" style="color: var(--success);" id="p0-earned">0.0000</span>
+              <span class="stat-value" style="color: var(--md-sys-color-tertiary);" id="p0-earned">0.0000</span>
             </div>
             <div style="margin-top: 10px;">
               <a class="external-link" target="_blank" href="https://app.uniswap.org/#/pool/v2?chain=sepolia">
-                Manage Uniswap v2 Liquidity ↗
+                Manage Uniswap v2 Liquidity <span class="material-symbols-outlined" style="font-size: 13px;">open_in_new</span>
               </a>
             </div>
           </div>
@@ -400,7 +554,9 @@
                 <div class="pool-title">Pool 1: GFSH / TAMR</div>
                 <div class="pool-subtitle">Amir's Pool</div>
               </div>
-              <a class="external-link" target="_blank" href="https://sepolia.etherscan.io/address/0x8dEdc40990F83B38DE95060f9E6A2dA04193AFDB">LP Contract ↗</a>
+              <a class="external-link" target="_blank" href="https://sepolia.etherscan.io/address/0x8dEdc40990F83B38DE95060f9E6A2dA04193AFDB">
+                LP Contract <span class="material-symbols-outlined" style="font-size: 13px;">open_in_new</span>
+              </a>
             </div>
             <div class="stat-row">
               <span class="stat-label">Total Staked LP</span>
@@ -416,11 +572,11 @@
             </div>
             <div class="stat-row">
               <span class="stat-label">Earned GFSH</span>
-              <span class="stat-value" style="color: var(--success);" id="p1-earned">0.0000</span>
+              <span class="stat-value" style="color: var(--md-sys-color-tertiary);" id="p1-earned">0.0000</span>
             </div>
             <div style="margin-top: 10px;">
               <a class="external-link" target="_blank" href="https://app.uniswap.org/#/pool/v2?chain=sepolia">
-                Manage Uniswap v2 Liquidity ↗
+                Manage Uniswap v2 Liquidity <span class="material-symbols-outlined" style="font-size: 13px;">open_in_new</span>
               </a>
             </div>
           </div>
@@ -449,7 +605,9 @@
                 <div class="pool-title">Pool 2: tok / GFSH</div>
                 <div class="pool-subtitle">tokjv's Pool</div>
               </div>
-              <a class="external-link" target="_blank" href="https://sepolia.etherscan.io/address/0x113E5C416BaABdc66d2986aCB6e5A43452734eB1">LP Contract ↗</a>
+              <a class="external-link" target="_blank" href="https://sepolia.etherscan.io/address/0x113E5C416BaABdc66d2986aCB6e5A43452734eB1">
+                LP Contract <span class="material-symbols-outlined" style="font-size: 13px;">open_in_new</span>
+              </a>
             </div>
             <div class="stat-row">
               <span class="stat-label">Total Staked LP</span>
@@ -465,11 +623,11 @@
             </div>
             <div class="stat-row">
               <span class="stat-label">Earned GFSH</span>
-              <span class="stat-value" style="color: var(--success);" id="p2-earned">0.0000</span>
+              <span class="stat-value" style="color: var(--md-sys-color-tertiary);" id="p2-earned">0.0000</span>
             </div>
             <div style="margin-top: 10px;">
               <a class="external-link" target="_blank" href="https://app.uniswap.org/#/pool/v2?chain=sepolia">
-                Manage Uniswap v2 Liquidity ↗
+                Manage Uniswap v2 Liquidity <span class="material-symbols-outlined" style="font-size: 13px;">open_in_new</span>
               </a>
             </div>
           </div>
@@ -539,20 +697,19 @@
     let poolContracts = [];
     let isOwner = false;
 
-    // Cache of pool raw balances
     let rawUserLpBalances = [0n, 0n, 0n];
     let rawUserStaked = [0n, 0n, 0n];
 
     function showTxBanner(msg, type = "info", txHash = null) {
       const banner = document.getElementById("tx-banner");
-      let color = "var(--accent)";
-      if (type === "success") color = "var(--success)";
-      if (type === "warning") color = "var(--warning)";
-      if (type === "danger") color = "var(--danger)";
+      let color = "var(--md-sys-color-primary)";
+      if (type === "success") color = "var(--md-sys-color-tertiary)";
+      if (type === "warning") color = "var(--md-sys-color-warning)";
+      if (type === "danger") color = "var(--md-sys-color-error)";
 
-      let html = `<span style="color: ${color}; font-weight: 600;">[Status]</span> ${msg}`;
+      let html = `<span style="color: ${color}; font-weight: 500;">[Status]</span> ${msg}`;
       if (txHash) {
-        html += ` · <a target="_blank" href="https://sepolia.etherscan.io/tx/${txHash}">View on Etherscan ↗</a>`;
+        html += ` · <a target="_blank" href="https://sepolia.etherscan.io/tx/${txHash}">View on Etherscan <span class="material-symbols-outlined" style="font-size: 14px;">open_in_new</span></a>`;
       }
       banner.innerHTML = html;
       banner.classList.add("show");
@@ -564,11 +721,11 @@
       const badge = document.getElementById("network-badge");
       if (net.chainId === SEPOLIA_CHAIN_ID) {
         badge.className = "badge active";
-        badge.innerText = "Sepolia Network (Active)";
+        badge.innerHTML = `<span class="material-symbols-outlined" style="font-size: 16px;">wifi</span> Sepolia Network (Active)`;
         return true;
       } else {
         badge.className = "badge danger";
-        badge.innerText = `Wrong Network (Chain ${net.chainId})`;
+        badge.innerHTML = `<span class="material-symbols-outlined" style="font-size: 16px;">wifi_off</span> Wrong Network (${net.chainId})`;
         return false;
       }
     }
@@ -607,7 +764,7 @@
         signer = await provider.getSigner();
         userAddress = accounts[0];
         document.getElementById("user-address").innerText = `${userAddress.slice(0, 6)}...${userAddress.slice(-4)}`;
-        document.getElementById("connect-btn").innerText = "Connected";
+        document.getElementById("connect-btn").innerHTML = `<span class="material-symbols-outlined" style="font-size: 18px;">check</span> Connected`;
 
         const isSepolia = await checkNetwork();
         if (!isSepolia) {
@@ -632,7 +789,6 @@
       try {
         if (!farmContract) initContracts();
 
-        // 1. Campaign state
         const [started, duration, totalReward, owner, farmGfshBal] = await Promise.all([
           farmContract.started(),
           farmContract.duration(),
@@ -700,7 +856,6 @@
           progressBar.style.width = "100%";
         }
 
-        // 2. User overall stats
         if (userAddress) {
           const [userBal, totalEarned] = await Promise.all([
             gfshContract.balanceOf(userAddress),
@@ -711,7 +866,6 @@
           document.getElementById("claim-all-btn").disabled = (totalEarned === 0n);
         }
 
-        // 3. Pool-by-pool stats
         for (let i = 0; i < 3; i++) {
           const poolData = await farmContract.pools(i);
           document.getElementById(`p${i}-total-staked`).innerText = parseFloat(ethers.formatEther(poolData.totalStaked)).toFixed(4);
@@ -820,7 +974,6 @@
       }, `Claim All Pools Rewards`);
     }
 
-    // Admin functions
     async function fundFarm() {
       const amount = ethers.parseEther("120000");
       await executeTx(async () => {
@@ -836,9 +989,7 @@
       }, `Start Farm Session`);
     }
 
-    // Auto-refresh interval
     window.addEventListener("DOMContentLoaded", () => {
-      // Connect to public provider if window.ethereum not available immediately
       if (window.ethereum) {
         provider = new ethers.BrowserProvider(window.ethereum);
         window.ethereum.on("accountsChanged", () => window.location.reload());
